@@ -101,7 +101,7 @@ namespace MathExpressionParser
                         // if the previous token is a BinaryOperator or left parenthesis and the current operator is a supported unary operator
                         // then we can add current operator as a unary operator token
                         if ((lookBehind.GetType() == typeof(BinaryOperator) ||
-                             lookBehind.GetType() == typeof(Parenthesis) && ((Parenthesis)lookBehind).Associativity != Associativity.RIGHT) &&
+                             lookBehind.GetType() == typeof(Parenthesis) && ((Parenthesis)lookBehind).Associativity == Associativity.LEFT) &&
                              UnaryOperators.ContainsKey(oValue)) {
                             tokens.Add(UnaryOperators[oValue]);
                             onCreatedTokenHandler?.Invoke(UnaryOperators[oValue]);

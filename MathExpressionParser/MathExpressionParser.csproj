@@ -45,12 +45,16 @@
   <ItemGroup>
     <Compile Include="BinaryOperator.cs" />
     <Compile Include="Calculator.cs" />
+    <Compile Include="Function.cs" />
+    <Compile Include="Functions\Pow.cs" />
+    <Compile Include="Functions\Sin.cs" />
     <Compile Include="InfixToPostfixConverter.cs" />
     <Compile Include="INotationConverter.cs" />
     <Compile Include="IPostfixNotationParser.cs" />
     <Compile Include="ITokenizer.cs" />
     <Compile Include="Literal.cs" />
     <Compile Include="Operator.cs" />
+    <Compile Include="ParameterSeparator.cs" />
     <Compile Include="Parenthesis.cs" />
     <Compile Include="PostfixNotationParser.cs" />
     <Compile Include="Program.cs" />

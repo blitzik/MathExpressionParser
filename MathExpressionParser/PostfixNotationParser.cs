@@ -25,11 +25,11 @@ namespace MathExpressionParser
 
                     } else { // must be operator
                         if (t is UnaryOperator uo) {
-                            result = uo.Calc(ParseNumber(stack.Pop()));
+                            result = uo.Process(ParseNumber(stack.Pop()));
 
                         } else {
                             BinaryOperator bo = (BinaryOperator)t;
-                            result = bo.Calc(ParseNumber(stack.Pop()), ParseNumber(stack.Pop()));
+                            result = bo.Process(ParseNumber(stack.Pop()), ParseNumber(stack.Pop()));
                         }
 
                         stack.Push(new Literal(result.ToString()));

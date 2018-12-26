@@ -1,8 +1,11 @@
-﻿using System;
+﻿using MathExpressionParser.Functions;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MathExpressionParser
@@ -11,6 +14,8 @@ namespace MathExpressionParser
     {
         public static void Main(string[] args)
         {
+            CultureInfo ci = new CultureInfo("en-US");
+
             Console.WriteLine("Simple math expression parser using shunting-yard algorithm.");
             Console.WriteLine("Supported unary operators: +  -");
             Console.WriteLine("Supported binary operators: +  -  *  /  ^");
@@ -23,7 +28,13 @@ namespace MathExpressionParser
                 Console.WriteLine(string.Format("({0}) {1}", token, token.GetType().Name));
             };
 
+            string expression = "(3 + 2) - 5";
+            List<Token> tokens = t.Tokenize(expression);
             IInfixToPostfixNotationConverter c = new InfixToPostfixConverter(t);
+            List<Token> result = c.Convert(expression);
+            // 3 -90 sin sin + 5 -
+
+            /*IInfixToPostfixNotationConverter c = new InfixToPostfixConverter(t);
             c.OnFinishedConversion += (resultCollection) => {
                 Console.Write("Reverse-Polish Notation: ");
                 foreach (Token tok in resultCollection) {
@@ -51,7 +62,7 @@ namespace MathExpressionParser
                     continue;
                 }
 
-            } while (true);
+            } while (true);*/
         }
     }
 }

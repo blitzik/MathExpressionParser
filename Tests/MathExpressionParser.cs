@@ -187,6 +187,13 @@ namespace Tests
 
 
         [TestMethod]
+        public void ImplicitLiteralMultiplication()
+        {
+            Assert.AreEqual(9, _calc.Calculate("3 3"));
+        }
+
+
+        [TestMethod]
         public void ImplicitMultiplication_Left()
         {
             Assert.AreEqual(25, _calc.Calculate("5(3 + 2)"));

@@ -16,9 +16,9 @@ namespace MathExpressionParser
         }
 
 
-        public double Calc(double a, double b)
+        public override double Process(params double[] args)
         {
-            return _action.Invoke(a, b);
+            return _action.Invoke(args[0], args[1]);
         }
     }
 }

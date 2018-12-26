@@ -12,7 +12,7 @@ namespace MathExpressionParser
     }
 
 
-    public abstract class Operator : Token
+    public abstract class Operator : Function
     {
         private int _precedence;
         public int Precedence

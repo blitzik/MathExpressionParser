@@ -46,8 +46,9 @@
     <Compile Include="BinaryOperator.cs" />
     <Compile Include="Calculator.cs" />
     <Compile Include="Function.cs" />
+    <Compile Include="Functions\Abs.cs" />
+    <Compile Include="Functions\BaseFunction.cs" />
     <Compile Include="Functions\Pow.cs" />
-    <Compile Include="Functions\Sin.cs" />
     <Compile Include="InfixToPostfixConverter.cs" />
     <Compile Include="INotationConverter.cs" />
     <Compile Include="IPostfixNotationParser.cs" />

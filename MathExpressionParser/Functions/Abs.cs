@@ -6,16 +6,17 @@ using System.Threading.Tasks;
 
 namespace MathExpressionParser.Functions
 {
-    public class Sin : Function
+    public class Abs : BaseFunction
     {
-        public Sin(string value) : base(value)
+        public Abs(string value) : base(value)
         {
+            NumberOfParameters = 1;
         }
 
 
         public override double Process(params double[] args)
         {
-            return Math.Sin(args[0]);
+            return Math.Abs(args[0]);
         }
     }
 }

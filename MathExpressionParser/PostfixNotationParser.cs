@@ -15,24 +15,21 @@ namespace MathExpressionParser
 
         public double Parse(IList<Token> tokens)
         {
-            double result = 0;
-
             Stack<Literal> stack = new Stack<Literal>();
             try {
                 foreach (Token t in tokens) {
-                    if (t is Literal) {
+                    Type tt = t.GetType();
+                    if (tt == typeof(Literal)) {
                         stack.Push((Literal)t);
 
-                    } else { // must be operator
-                        if (t is UnaryOperator uo) {
-                            result = uo.Process(ParseNumber(stack.Pop()));
-
-                        } else {
-                            BinaryOperator bo = (BinaryOperator)t;
-                            result = bo.Process(ParseNumber(stack.Pop()), ParseNumber(stack.Pop()));
+                    } else { // functions & operators
+                        Function f = (Function)t;
+                        double[] parameters = new double[f.NumberOfParameters];
+                        for (int i = 0; i < f.NumberOfParameters; i++) {
+                            parameters[i] = ParseNumber(stack.Pop());
                         }
+                        stack.Push(new Literal(f.Process(parameters).ToString()));
 
-                        stack.Push(new Literal(result.ToString()));
                     }
                 }
 

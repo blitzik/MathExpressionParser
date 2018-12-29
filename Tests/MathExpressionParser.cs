@@ -111,6 +111,8 @@ namespace Tests
         public void Associativity_Power()
         {
             Assert.AreEqual(6561, _calc.Calculate("3 ^ 2 ^ 3"));
+            Assert.AreEqual(-8, _calc.Calculate("-2^3"));
+            Assert.AreEqual(0.125, _calc.Calculate("2^-3"));
         }
 
 
@@ -149,6 +151,15 @@ namespace Tests
             Assert.AreEqual(-25, _calc.Calculate("(3 + 2) * -5"));
             Assert.AreEqual(0.5, _calc.Calculate("2^-1"));
         }
+
+
+        [TestMethod]
+        public void Negation_AfterParameterSeparator()
+        {
+            Assert.AreEqual(0.125, _calc.Calculate("pow(2, -3)"));
+            Assert.AreEqual(0.125, _calc.Calculate("pow(2, -pow(3, 1))"));
+        }
+
 
         [TestMethod]
         public void Negation_AfterOperator_InParenthesis()
@@ -219,6 +230,28 @@ namespace Tests
         {
             Assert.AreEqual(0, _calc.Calculate("(3 + 2)-5")); // not a multiplication
             Assert.AreEqual(-25, _calc.Calculate("(3 + 2)(-5)"));
+        }
+
+
+        [TestMethod]
+        public void Function_Pow()
+        {
+            Assert.AreEqual(8, _calc.Calculate("pow(2, 3)"));
+            Assert.AreEqual(-8, _calc.Calculate("pow(-2, 3)"));
+        }
+
+
+        [TestMethod]
+        public void Function_FunctionInFunction()
+        {
+            Assert.AreEqual(8, _calc.Calculate("pow(2, pow(3, 1))"));
+        }
+
+
+        [TestMethod]
+        public void ComplexExpressions()
+        {
+            Assert.AreEqual(0.125, _calc.Calculate("pow(-(-5 + 3) , -abs(-3))"));
         }
     }
 }

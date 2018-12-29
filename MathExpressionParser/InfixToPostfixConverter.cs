@@ -23,42 +23,46 @@ namespace MathExpressionParser
         public List<Token> Convert(string expression)
         {
             List<Token> queue = new List<Token>();
-            Stack<Operator> operatorStack = new Stack<Operator>();
+            Stack<Function> operatorStack = new Stack<Function>();
 
             List<Token> tokens = _tokenizer.Tokenize(expression);
             foreach (Token t in tokens) {
                 if (t is Literal) {
                     queue.Add(t);
 
-                } else { // must be operator
-                    if (t is Parenthesis p) {
-                        if (p.Associativity == Associativity.LEFT) { // left bracket
-                            operatorStack.Push(p);
+                } else if (t is ParameterSeparator) {
+                    while (operatorStack.Count > 0 && !operatorStack.Peek().Value.Equals("(")) {
+                        queue.Add(operatorStack.Pop());
+                    }
 
-                        } else { // right bracket
-                            while (operatorStack.Count > 0 && !operatorStack.Peek().Value.Equals("(")) {
-                                queue.Add(operatorStack.Pop());
-                            }
-                            if (operatorStack.Count > 0) {
-                                operatorStack.Pop(); // removal of opening bracket
+                } else if (t is Parenthesis p) {
+                    if (p.Associativity == Associativity.LEFT) { // left bracket
+                        operatorStack.Push(p);
 
-                            } else {
-                                throw new Exception("An Opening Parenthesis is missing");
-                            }
+                    } else { // right bracket
+                        while (operatorStack.Count > 0 && !operatorStack.Peek().Value.Equals("(")) {
+                            queue.Add(operatorStack.Pop());
                         }
-
-                    } else {
-                        if (t is UnaryOperator uo) {
-                            operatorStack.Push(uo);
+                        if (operatorStack.Count > 0) {
+                            operatorStack.Pop(); // removal of opening bracket
 
                         } else {
-                            Operator o = (Operator)t;
-                            while (operatorStack.Count > 0 && (operatorStack.Peek().Precedence > o.Precedence || operatorStack.Peek().Precedence == o.Precedence && o.Associativity == Associativity.LEFT)) {
-                                queue.Add(operatorStack.Pop());
-                            }
-                            operatorStack.Push(o);
+                            throw new Exception("An Opening Parenthesis is missing");
                         }
                     }
+
+                } else if (t is UnaryOperator uo) {
+                    operatorStack.Push(uo);
+
+                } else if (t is BinaryOperator) {
+                    Function o = (Function)t;
+                    while (operatorStack.Count > 0 && (operatorStack.Peek().Precedence > o.Precedence || operatorStack.Peek().Precedence == o.Precedence && o.Associativity == Associativity.LEFT)) {
+                        queue.Add(operatorStack.Pop());
+                    }
+                    operatorStack.Push(o);
+
+                } else { // function
+                    operatorStack.Push((Function)t);
                 }
             }
 

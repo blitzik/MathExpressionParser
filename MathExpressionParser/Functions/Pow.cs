@@ -6,16 +6,17 @@ using System.Threading.Tasks;
 
 namespace MathExpressionParser.Functions
 {
-    public class Pow : Function
+    public class Pow : BaseFunction
     {
         public Pow(string value) : base(value)
         {
+            NumberOfParameters = 2;
         }
 
 
         public override double Process(params double[] args)
         {
-            return Math.Pow(args[0], args[1]);
+            return Math.Pow(args[1], args[0]);
         }
     }
 }

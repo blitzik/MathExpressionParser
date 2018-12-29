@@ -10,9 +10,10 @@ namespace MathExpressionParser
     {
         private Func<double, double> _action;
 
-        public UnaryOperator(string value, int precedence, Associativity associativity, Func<double, double> action) : base(value, precedence, associativity)
+        public UnaryOperator(string value, int numberOfParamenters, int precedence, Associativity associativity, Func<double, double> action) : base(value, precedence, associativity)
         {
             _action = action;
+            NumberOfParameters = numberOfParamenters;
         }
 
 

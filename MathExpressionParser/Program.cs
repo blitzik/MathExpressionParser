@@ -28,10 +28,12 @@ namespace MathExpressionParser
                 Console.WriteLine(string.Format("({0}) {1}", token, token.GetType().Name));
             };
 
-            string expression = "(3 + 2) - 5";
+            string expression = "pow(-(-5 + 3) , -abs(-3))"; // pow(2, -3)
             List<Token> tokens = t.Tokenize(expression);
             IInfixToPostfixNotationConverter c = new InfixToPostfixConverter(t);
-            List<Token> result = c.Convert(expression);
+            List<Token> convertedTokens = c.Convert(expression);
+            PostfixNotationParser p = new PostfixNotationParser();
+            double result = p.Parse(convertedTokens);
             // 3 -90 sin sin + 5 -
 
             /*IInfixToPostfixNotationConverter c = new InfixToPostfixConverter(t);

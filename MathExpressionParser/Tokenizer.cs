@@ -58,24 +58,24 @@ namespace MathExpressionParser
 
             UnaryOperators = new ReadOnlyDictionary<string, UnaryOperator>(
                 new Dictionary<string, UnaryOperator>() {
-                    { "-", new UnaryOperator("-", 3, Associativity.RIGHT, new Func<double, double>((a) => { return a * (-1); })) },
-                    { "+", new UnaryOperator("+", 3, Associativity.RIGHT, new Func<double, double>((a) => { return a; })) }
+                    { "-", new UnaryOperator("-", 1, 4, Associativity.LEFT, new Func<double, double>((a) => { return a * (-1); })) },
+                    { "+", new UnaryOperator("+", 1, 4, Associativity.LEFT, new Func<double, double>((a) => { return a; })) }
                 }
             );
 
             BinaryOperators = new ReadOnlyDictionary<string, BinaryOperator>(
                 new Dictionary<string, BinaryOperator>() {
-                    { "+", new BinaryOperator("+", 1, Associativity.LEFT, new Func<double, double, double>((a, b) => { return b + a; })) },
-                    { "-", new BinaryOperator("-", 1, Associativity.LEFT, new Func<double, double, double>((a, b) => { return b - a; })) },
-                    { "*", new BinaryOperator("*", 2, Associativity.LEFT, new Func<double, double, double>((a, b) => { return b * a; })) },
-                    { "/", new BinaryOperator("/", 2, Associativity.LEFT, new Func<double, double, double>((a, b) => {
+                    { "+", new BinaryOperator("+", 2, 1, Associativity.LEFT, new Func<double, double, double>((a, b) => { return b + a; })) },
+                    { "-", new BinaryOperator("-", 2, 1, Associativity.LEFT, new Func<double, double, double>((a, b) => { return b - a; })) },
+                    { "*", new BinaryOperator("*", 2, 2, Associativity.LEFT, new Func<double, double, double>((a, b) => { return b * a; })) },
+                    { "/", new BinaryOperator("/", 2, 2, Associativity.LEFT, new Func<double, double, double>((a, b) => {
                         if (a == 0) {
                             throw new DivideByZeroException("Expression cannot be parsed. Divison by zero.");
                         }
                         return b / a;
                         }))
                     },
-                    { "^", new BinaryOperator("^", 4, Associativity.RIGHT, new Func<double, double, double>((a, b) => { return Math.Pow(b, a); })) }
+                    { "^", new BinaryOperator("^", 2, 3, Associativity.RIGHT, new Func<double, double, double>((a, b) => { return Math.Pow(b, a); })) }
                 }
             );
 
@@ -88,8 +88,8 @@ namespace MathExpressionParser
 
 
             _functionsStorage = new Dictionary<string, Function>() {
-                { "sin", new Sin("sin") },
-                { "pow", new Pow("pow") }
+                { "pow", new Pow("pow") },
+                { "abs", new Abs("abs") }
             };
             Functions = new ReadOnlyDictionary<string, Function>(_functionsStorage);
         }
@@ -123,6 +123,7 @@ namespace MathExpressionParser
             +;- at the start of an expression (lookBehind == null) | -(3 + 2); -5 + 2 -- done
             BinaryOperator +;- | 3 + -2 -- done
             OpeningParenthesis +;- | (-3 + 2)5 -- done
+            ParameterSeparator +;- number | pow(2, -3); -- done
         */
 
         public event Action<Token> OnCreatedToken;
@@ -155,6 +156,11 @@ namespace MathExpressionParser
                     continue;
                 }
 
+                if (c.Equals(',')) {
+                    tokens.Add(new ParameterSeparator(","));
+                    continue;
+                }
+
                 string oValue = c.ToString(); // operator symbol
 
                 // unary operators
@@ -171,6 +177,7 @@ namespace MathExpressionParser
                         Type lbType = lookBehind.GetType();
                         if ((lbType == typeof(BinaryOperator) ||
                              lbType == typeof(Function) ||
+                             lbType == typeof(ParameterSeparator) ||
                              lbType == typeof(Parenthesis) && ((Parenthesis)lookBehind).Associativity == Associativity.LEFT) &&
                              UnaryOperators.ContainsKey(oValue)) {
                             tokens.Add(UnaryOperators[oValue]);

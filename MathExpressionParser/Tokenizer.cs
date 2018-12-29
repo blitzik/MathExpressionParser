@@ -58,24 +58,24 @@ namespace MathExpressionParser
 
             UnaryOperators = new ReadOnlyDictionary<string, UnaryOperator>(
                 new Dictionary<string, UnaryOperator>() {
-                    { "-", new UnaryOperator("-", 1, 4, Associativity.LEFT, new Func<double, double>((a) => { return a * (-1); })) },
-                    { "+", new UnaryOperator("+", 1, 4, Associativity.LEFT, new Func<double, double>((a) => { return a; })) }
+                    { "-", new UnaryOperator("-", 4, Associativity.LEFT, new Func<double, double>((a) => { return a * (-1); })) },
+                    { "+", new UnaryOperator("+", 4, Associativity.LEFT, new Func<double, double>((a) => { return a; })) }
                 }
             );
 
             BinaryOperators = new ReadOnlyDictionary<string, BinaryOperator>(
                 new Dictionary<string, BinaryOperator>() {
-                    { "+", new BinaryOperator("+", 2, 1, Associativity.LEFT, new Func<double, double, double>((a, b) => { return b + a; })) },
-                    { "-", new BinaryOperator("-", 2, 1, Associativity.LEFT, new Func<double, double, double>((a, b) => { return b - a; })) },
-                    { "*", new BinaryOperator("*", 2, 2, Associativity.LEFT, new Func<double, double, double>((a, b) => { return b * a; })) },
-                    { "/", new BinaryOperator("/", 2, 2, Associativity.LEFT, new Func<double, double, double>((a, b) => {
+                    { "+", new BinaryOperator("+", 1, Associativity.LEFT, new Func<double, double, double>((a, b) => { return b + a; })) },
+                    { "-", new BinaryOperator("-", 1, Associativity.LEFT, new Func<double, double, double>((a, b) => { return b - a; })) },
+                    { "*", new BinaryOperator("*", 2, Associativity.LEFT, new Func<double, double, double>((a, b) => { return b * a; })) },
+                    { "/", new BinaryOperator("/", 2, Associativity.LEFT, new Func<double, double, double>((a, b) => {
                         if (a == 0) {
                             throw new DivideByZeroException("Expression cannot be parsed. Divison by zero.");
                         }
                         return b / a;
                         }))
                     },
-                    { "^", new BinaryOperator("^", 2, 3, Associativity.RIGHT, new Func<double, double, double>((a, b) => { return Math.Pow(b, a); })) }
+                    { "^", new BinaryOperator("^", 3, Associativity.RIGHT, new Func<double, double, double>((a, b) => { return Math.Pow(b, a); })) }
                 }
             );
 

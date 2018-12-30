@@ -58,8 +58,8 @@ namespace MathExpressionParser
 
             UnaryOperators = new ReadOnlyDictionary<string, UnaryOperator>(
                 new Dictionary<string, UnaryOperator>() {
-                    { "-", new UnaryOperator("-", 4, Associativity.RIGHT, new Func<double, double>((a) => { return a * (-1); })) },
-                    { "+", new UnaryOperator("+", 4, Associativity.RIGHT, new Func<double, double>((a) => { return a; })) }
+                    { "-", new UnaryOperator("-", 3, Associativity.LEFT, new Func<double, double>((a) => { return a * (-1); })) },
+                    { "+", new UnaryOperator("+", 3, Associativity.LEFT, new Func<double, double>((a) => { return a; })) }
                 }
             );
 
@@ -75,7 +75,7 @@ namespace MathExpressionParser
                         return b / a;
                         }))
                     },
-                    { "^", new BinaryOperator("^", 3, Associativity.RIGHT, new Func<double, double, double>((a, b) => { return Math.Pow(b, a); })) }
+                    { "^", new BinaryOperator("^", 4, Associativity.RIGHT, new Func<double, double, double>((a, b) => { return Math.Pow(b, a); })) }
                 }
             );
 

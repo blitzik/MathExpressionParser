@@ -41,11 +41,7 @@ namespace MathExpressionParser
             c.OnFinishedConversion += (resultCollection) => {
                 Console.Write("Reverse-Polish Notation: ");
                 foreach (Token tok in resultCollection) {
-                    if (tok is UnaryOperator) {
-                        Console.Write(string.Format("{0}u ", tok));
-                    } else {
-                        Console.Write(string.Format("{0} ", tok));
-                    }
+                    Console.Write(string.Format("{0}{1} ", tok, tok is UnaryOperator ? "u" : string.Empty));
                 }
                 Console.WriteLine();
             };

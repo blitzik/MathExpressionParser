@@ -176,8 +176,7 @@ namespace MathExpressionParser
                         // if the previous token is a function, opening parenthesis or parameter separator
                         // we can add current token as a unary operator
                         Type lbType = lookBehind.GetType();
-                        if (lookBehind is Function &&
-                            (lbType != typeof(Parenthesis) || ((Parenthesis)lookBehind).Associativity != Associativity.RIGHT) ||
+                        if ((lookBehind is Function && (lbType != typeof(Parenthesis) || ((Parenthesis)lookBehind).Associativity != Associativity.RIGHT)) ||
                              lbType == typeof(ParameterSeparator) && UnaryOperators.ContainsKey(oValue)) {
                             tokens.Add(UnaryOperators[oValue]);
                             onCreatedTokenHandler?.Invoke(UnaryOperators[oValue]);

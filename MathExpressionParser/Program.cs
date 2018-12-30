@@ -27,7 +27,7 @@ namespace MathExpressionParser
 
             ITokenizer t = new Tokenizer();
             t.OnCreatedToken += (Token token) => {
-                Console.WriteLine(string.Format("({0}) {1}", token, token.GetType().Name));
+                Console.WriteLine(string.Format("({0}) {1}", token, token is BaseFunction ? "Function" : token.GetType().Name));
             };
 
             /*string expression = "-abs-3";

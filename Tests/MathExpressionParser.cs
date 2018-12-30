@@ -191,6 +191,20 @@ namespace Tests
 
 
         [TestMethod]
+        public void Negation_AfterFunction()
+        {
+            Assert.AreEqual(3, _calc.Calculate("abs(-3)"));
+        }
+
+
+        [TestMethod]
+        public void Negation_AfterFunction_NoParenthesis()
+        {
+            Assert.AreEqual(3, _calc.Calculate("abs-3"));
+        }
+
+
+        [TestMethod]
         public void MinusAfterRightParenthesis()
         {
             Assert.AreEqual(0, _calc.Calculate("(3 + 2) - 5"));
@@ -251,7 +265,7 @@ namespace Tests
         [TestMethod]
         public void ComplexExpressions()
         {
-            Assert.AreEqual(0.125, _calc.Calculate("pow(-(-5 + 3) , -abs(-3))"));
+            Assert.AreEqual(0.125, _calc.Calculate("pow(-(-19 + 3) / 8 , -abs-3)"));
         }
     }
 }

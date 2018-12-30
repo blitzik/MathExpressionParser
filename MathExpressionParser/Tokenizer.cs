@@ -124,6 +124,7 @@ namespace MathExpressionParser
             BinaryOperator +;- | 3 + -2 -- done
             OpeningParenthesis +;- | (-3 + 2)5 -- done
             ParameterSeparator +;- number | pow(2, -3); -- done
+            +;- function +;- number | -abs-3 -- done
         */
 
         public event Action<Token> OnCreatedToken;
@@ -138,19 +139,19 @@ namespace MathExpressionParser
             Token lookBehind;
             foreach (char c in str) {
                 if (char.IsLetter(c)) {
-                    AddLiteral(literalBuilder, tokens, onCreatedTokenHandler);
+                    TryAddLiteral(literalBuilder, tokens, onCreatedTokenHandler);
                     functionBuilder.Append(c);
                     continue;
                 }
 
                 if (char.IsDigit(c) || c.Equals('.')) {
-                    AddFunction(functionBuilder, tokens, onCreatedTokenHandler);
+                    TryAddFunction(functionBuilder, tokens, onCreatedTokenHandler);
                     literalBuilder.Append(c);
                     continue;
                 }
 
-                AddLiteral(literalBuilder, tokens, onCreatedTokenHandler);
-                AddFunction(functionBuilder, tokens, onCreatedTokenHandler);
+                TryAddLiteral(literalBuilder, tokens, onCreatedTokenHandler);
+                TryAddFunction(functionBuilder, tokens, onCreatedTokenHandler);
 
                 if (c.Equals(' ')) {
                     continue;
@@ -172,14 +173,12 @@ namespace MathExpressionParser
                         continue;
 
                     } else {
-                        // if the previous token is a BinaryOperator or left parenthesis and the current operator is a supported unary operator
-                        // then we can add current operator as a unary operator token
+                        // if the previous token is a function, opening parenthesis or parameter separator
+                        // we can add current token as a unary operator
                         Type lbType = lookBehind.GetType();
-                        if ((lbType == typeof(BinaryOperator) ||
-                             lbType == typeof(Function) ||
-                             lbType == typeof(ParameterSeparator) ||
-                             lbType == typeof(Parenthesis) && ((Parenthesis)lookBehind).Associativity == Associativity.LEFT) &&
-                             UnaryOperators.ContainsKey(oValue)) {
+                        if (lookBehind is Function &&
+                            (lbType != typeof(Parenthesis) || ((Parenthesis)lookBehind).Associativity != Associativity.RIGHT) ||
+                             lbType == typeof(ParameterSeparator) && UnaryOperators.ContainsKey(oValue)) {
                             tokens.Add(UnaryOperators[oValue]);
                             onCreatedTokenHandler?.Invoke(UnaryOperators[oValue]);
                             continue;
@@ -206,14 +205,14 @@ namespace MathExpressionParser
                 }
             }
 
-            AddLiteral(literalBuilder, tokens, onCreatedTokenHandler);
-            AddFunction(functionBuilder, tokens, onCreatedTokenHandler);
+            TryAddLiteral(literalBuilder, tokens, onCreatedTokenHandler);
+            TryAddFunction(functionBuilder, tokens, onCreatedTokenHandler);
 
             return tokens;
         }
 
 
-        private void AddLiteral(StringBuilder literalBuilder, List<Token> tokenStorage, Action<Token> onCreatedTokenHandler)
+        private void TryAddLiteral(StringBuilder literalBuilder, List<Token> tokenStorage, Action<Token> onCreatedTokenHandler)
         {
             if (literalBuilder.Length > 0) {
                 Token lookBehind = tokenStorage.LastOrDefault();
@@ -232,7 +231,7 @@ namespace MathExpressionParser
         }
 
 
-        private void AddFunction(StringBuilder functionBuilder, List<Token> tokenStorage, Action<Token> onCreatedTokenHandler)
+        private void TryAddFunction(StringBuilder functionBuilder, List<Token> tokenStorage, Action<Token> onCreatedTokenHandler)
         {
             if (functionBuilder.Length > 0) {
                 string func = functionBuilder.ToString();

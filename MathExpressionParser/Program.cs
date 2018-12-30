@@ -15,6 +15,8 @@ namespace MathExpressionParser
         public static void Main(string[] args)
         {
             CultureInfo ci = new CultureInfo("en-US");
+            Thread.CurrentThread.CurrentCulture = ci;
+            Thread.CurrentThread.CurrentUICulture = ci;
 
             Console.WriteLine("Simple math expression parser using shunting-yard algorithm.");
             Console.WriteLine("Supported unary operators: +  -");
@@ -28,15 +30,14 @@ namespace MathExpressionParser
                 Console.WriteLine(string.Format("({0}) {1}", token, token.GetType().Name));
             };
 
-            string expression = "pow(-(-5 + 3) , -abs(-3))"; // pow(2, -3)
+            /*string expression = "-abs-3";
             List<Token> tokens = t.Tokenize(expression);
             IInfixToPostfixNotationConverter c = new InfixToPostfixConverter(t);
             List<Token> convertedTokens = c.Convert(expression);
             PostfixNotationParser p = new PostfixNotationParser();
-            double result = p.Parse(convertedTokens);
-            // 3 -90 sin sin + 5 -
+            double result = p.Parse(convertedTokens);*/
 
-            /*IInfixToPostfixNotationConverter c = new InfixToPostfixConverter(t);
+            IInfixToPostfixNotationConverter c = new InfixToPostfixConverter(t);
             c.OnFinishedConversion += (resultCollection) => {
                 Console.Write("Reverse-Polish Notation: ");
                 foreach (Token tok in resultCollection) {
@@ -64,7 +65,7 @@ namespace MathExpressionParser
                     continue;
                 }
 
-            } while (true);*/
+            } while (true);
         }
     }
 }

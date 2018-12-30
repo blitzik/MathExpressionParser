@@ -51,11 +51,8 @@ namespace MathExpressionParser
                         }
                     }
 
-                } else if (t is UnaryOperator uo) {
-                    operatorStack.Push(uo);
-
-                } else if (t is BinaryOperator) {
-                    Function o = (Function)t;
+                } else if (t is Operator) {
+                    Operator o = (Operator)t;
                     while (operatorStack.Count > 0 && (operatorStack.Peek().Precedence > o.Precedence || operatorStack.Peek().Precedence == o.Precedence && o.Associativity == Associativity.LEFT)) {
                         queue.Add(operatorStack.Pop());
                     }

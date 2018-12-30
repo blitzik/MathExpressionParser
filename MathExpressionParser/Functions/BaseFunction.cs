@@ -10,7 +10,7 @@ namespace MathExpressionParser.Functions
     {
         public BaseFunction(string value) : base(value)
         {
-            Precedence = 1000;
+            Precedence = 10;
             Associativity = Associativity.LEFT;
         }
     }

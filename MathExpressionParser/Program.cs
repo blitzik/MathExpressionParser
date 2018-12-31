@@ -23,6 +23,7 @@ namespace MathExpressionParser
             Console.WriteLine("Supported binary operators: +  -  *  /  ^");
             Console.WriteLine("Supported grouping operators: (  )");
             Console.WriteLine("Supported functions: pow, abs");
+            Console.WriteLine("Supported constants: PI");
             Console.WriteLine("Created by Aleš Tichava, December 2018");
             Console.WriteLine();
 

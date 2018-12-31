@@ -128,6 +128,8 @@ namespace MathExpressionParser
             
             // implicit multiplication
             number whitespace number | 3 3 -- done
+            number [whitespace] constant | 2PI -- done
+            constant [whitespace] number | PI2 -- done
             number OpeningParentehsis | 5 (2 + 3) -- done
             ClosingParenthesis number | (2 + 3) 5 -- done
             ClosingParenthesis OpeningParenthesis | (3 + 2)(3 + 2); (-5)(3 + 2) -- done
@@ -282,6 +284,7 @@ namespace MathExpressionParser
 
         private void CheckForImplicitMultiplication(List<Token> tokenStorage, Action<Token> onCreatedTokenHandler)
         {
+            // implicit multiplication - right side
             Token lookBehind = tokenStorage.LastOrDefault();
             if (lookBehind is Constant || lookBehind is Literal || (lookBehind is Parenthesis && ((Parenthesis)lookBehind).Associativity == Associativity.RIGHT)) {
                 tokenStorage.Add(BinaryOperators["*"]);

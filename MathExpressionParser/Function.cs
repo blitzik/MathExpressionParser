@@ -32,8 +32,9 @@ namespace MathExpressionParser
         }
 
 
-        public Function(string value) : base(value)
+        public Function(string symbol)
         {
+            Symbol = symbol;
         }
 
 

@@ -8,7 +8,7 @@ namespace MathExpressionParser.Functions
 {
     public class Pow : BaseFunction
     {
-        public Pow(string value) : base(value)
+        public Pow(string symbol) : base(symbol)
         {
             NumberOfParameters = 2;
         }

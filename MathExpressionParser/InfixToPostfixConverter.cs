@@ -27,11 +27,11 @@ namespace MathExpressionParser
 
             List<Token> tokens = _tokenizer.Tokenize(expression);
             foreach (Token t in tokens) {
-                if (t is Literal) {
+                if (t is Literal || t is Constant) {
                     queue.Add(t);
 
                 } else if (t is ParameterSeparator) {
-                    while (operatorStack.Count > 0 && !operatorStack.Peek().Value.Equals("(")) {
+                    while (operatorStack.Count > 0 && !operatorStack.Peek().Symbol.Equals("(")) {
                         queue.Add(operatorStack.Pop());
                     }
 
@@ -40,7 +40,7 @@ namespace MathExpressionParser
                         operatorStack.Push(p);
 
                     } else { // right bracket
-                        while (operatorStack.Count > 0 && !operatorStack.Peek().Value.Equals("(")) {
+                        while (operatorStack.Count > 0 && !operatorStack.Peek().Symbol.Equals("(")) {
                             queue.Add(operatorStack.Pop());
                         }
                         if (operatorStack.Count > 0) {
@@ -64,7 +64,7 @@ namespace MathExpressionParser
             }
 
             while (operatorStack.Count > 0) {
-                if (operatorStack.Peek().Value.Equals("(")) {
+                if (operatorStack.Peek().Symbol.Equals("(")) {
                     throw new Exception("A Closing Parenthesis is missing.");
                 }
                 queue.Add(operatorStack.Pop());

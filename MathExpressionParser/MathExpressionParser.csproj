@@ -45,6 +45,8 @@
   <ItemGroup>
     <Compile Include="BinaryOperator.cs" />
     <Compile Include="Calculator.cs" />
+    <Compile Include="Constant.cs" />
+    <Compile Include="Constants\PI.cs" />
     <Compile Include="Function.cs" />
     <Compile Include="Functions\Abs.cs" />
     <Compile Include="Functions\BaseFunction.cs" />

@@ -8,7 +8,7 @@ namespace MathExpressionParser.Functions
 {
     public class Abs : BaseFunction
     {
-        public Abs(string value) : base(value)
+        public Abs(string symbol) : base(symbol)
         {
             NumberOfParameters = 1;
         }

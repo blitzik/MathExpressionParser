@@ -14,7 +14,7 @@ namespace MathExpressionParser
 
     public abstract class Operator : Function
     {
-        public Operator(string value, int precedence, Associativity associativity) : base(value)
+        public Operator(string symbol, int precedence, Associativity associativity) : base(symbol)
         {
             Precedence = precedence;
             Associativity = associativity;

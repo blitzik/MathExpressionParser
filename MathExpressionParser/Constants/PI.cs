@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MathExpressionParser
+namespace MathExpressionParser.Constants
 {
-    public class Literal : Token
+    public class PI : Constant
     {
-        public Literal(string symbol)
+        public PI()
         {
-            Symbol = symbol;
+            Symbol = "PI";
+            Value = Math.PI;
         }
     }
 }

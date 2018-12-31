@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace MathExpressionParser
 {
-    public class Literal : Token
+    public abstract class Constant : Token
     {
-        public Literal(string symbol)
+        private double _value;
+        public double Value
         {
-            Symbol = symbol;
+            get { return _value; }
+            protected set { _value = value; }
         }
     }
 }

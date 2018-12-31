@@ -8,7 +8,7 @@ namespace MathExpressionParser.Functions
 {
     public abstract class BaseFunction : Function
     {
-        public BaseFunction(string value) : base(value)
+        public BaseFunction(string symbol) : base(symbol)
         {
             Precedence = 10;
             Associativity = Associativity.LEFT;

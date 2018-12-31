@@ -8,7 +8,7 @@ namespace MathExpressionParser
 {
     public class Parenthesis : Operator
     {
-        public Parenthesis(string value, int precedence, Associativity associativity) : base(value, precedence, associativity)
+        public Parenthesis(string symbol, int precedence, Associativity associativity) : base(symbol, precedence, associativity)
         {
             Precedence = precedence;
             Associativity = associativity;

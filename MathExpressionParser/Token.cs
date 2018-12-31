@@ -8,23 +8,17 @@ namespace MathExpressionParser
 {
     public abstract class Token
     {
-        private string _value;
-        public string Value
+        private string _symbol;
+        public string Symbol
         {
-            get { return _value; }
-            private set { _value = value; }
-        }
-
-
-        public Token(string value)
-        {
-            Value = value;
+            get { return _symbol; }
+            protected set { _symbol = value; }
         }
 
 
         public override string ToString()
         {
-            return Value;
+            return Symbol;
         }
     }
 }

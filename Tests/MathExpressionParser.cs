@@ -263,6 +263,45 @@ namespace Tests
 
 
         [TestMethod]
+        public void Constant_PI()
+        {
+            Assert.AreEqual(3.14159265358979, _calc.Calculate("PI"));
+            Assert.AreEqual(3.14159265358979, _calc.Calculate("pi"));
+        }
+
+
+        [TestMethod]
+        public void Constant_PI_ImplicitMultiplication_Left() // todo
+        {
+            Assert.AreEqual(2 * 3.14159265358979, _calc.Calculate("2PI"));
+            Assert.AreEqual(2 * 3.14159265358979, _calc.Calculate("2pi"));
+        }
+
+
+        [TestMethod]
+        public void Constant_PI_ImplicitMultiplication_Right() // todo
+        {
+            Assert.AreEqual(2 * 3.14159265358979, _calc.Calculate("PI2"));
+            Assert.AreEqual(2 * 3.14159265358979, _calc.Calculate("pi2"));
+        }
+
+
+        [TestMethod]
+        public void Constant_PI_ImplicitMultiplication_Negation_Left()
+        {
+            Assert.AreEqual(2* -3.14159265358979, _calc.Calculate("-2PI"));
+        }
+
+
+        [TestMethod]
+        public void Constant_PI_ImplicitMultiplication_Negation_Right()
+        {
+            Assert.AreEqual(3.14159265358979-2, _calc.Calculate("PI-2")); // not a unary negation
+            Assert.AreEqual(-3.14159265358979 * 2, _calc.Calculate("PI(-2)"));
+        }
+
+
+        [TestMethod]
         public void ComplexExpressions()
         {
             Assert.AreEqual(0.125, _calc.Calculate("pow(-(-19 + 3) / 8 , -abs-3)"));

@@ -8,8 +8,9 @@ namespace MathExpressionParser
 {
     public class ParameterSeparator : Token
     {
-        public ParameterSeparator(string value) : base(value)
+        public ParameterSeparator()
         {
+            Symbol = ",";
         }
     }
 }

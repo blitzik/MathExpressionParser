@@ -18,9 +18,11 @@ namespace MathExpressionParser
             Stack<Literal> stack = new Stack<Literal>();
             try {
                 foreach (Token t in tokens) {
-                    Type tt = t.GetType();
-                    if (tt == typeof(Literal)) {
+                    if (t is Literal) {
                         stack.Push((Literal)t);
+
+                    } else if (t is Constant c) {
+                        stack.Push(new Literal(c.Value.ToString()));
 
                     } else { // functions & operators
                         Function f = (Function)t;
@@ -44,13 +46,13 @@ namespace MathExpressionParser
                 throw new Exception("TODO [PostfixCalculator]. Stack has more items than it should have");
             }
 
-            return double.Parse(stack.Pop().Value);
+            return double.Parse(stack.Pop().Symbol);
         }
 
 
         private double ParseNumber(Literal number)
         {
-            if (double.TryParse(number.Value, out double result)) {
+            if (double.TryParse(number.Symbol, out double result)) {
                 return result;
             }
 

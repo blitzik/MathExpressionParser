@@ -1,4 +1,5 @@
-﻿using MathExpressionParser.Functions;
+﻿using MathExpressionParser.Constants;
+using MathExpressionParser.Functions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -41,6 +42,14 @@ namespace MathExpressionParser
         {
             get { return _functions; }
             private set { _functions = value; }
+        }
+
+
+        private ReadOnlyDictionary<string, Constant> _constants;
+        public ReadOnlyDictionary<string, Constant> Constants
+        {
+            get { return _constants; }
+            private set { _constants = value; }
         }
 
 
@@ -92,12 +101,19 @@ namespace MathExpressionParser
                 { "abs", new Abs("abs") }
             };
             Functions = new ReadOnlyDictionary<string, Function>(_functionsStorage);
+
+
+            Constants = new ReadOnlyDictionary<string, Constant>(
+                new Dictionary<string, Constant>() {
+                    { "pi", new PI() }
+                }
+            );
         }
 
 
         public void AddFunction(Function func)
         {
-            _functionsStorage.Add(func.Value, func);
+            _functionsStorage.Add(func.Symbol, func);
         }
 
         /*
@@ -135,30 +151,32 @@ namespace MathExpressionParser
             List<Token> tokens = new List<Token>();
 
             StringBuilder literalBuilder = new StringBuilder();
-            StringBuilder functionBuilder = new StringBuilder();
+            StringBuilder stringBuilder = new StringBuilder();
             Token lookBehind;
             foreach (char c in str) {
                 if (char.IsLetter(c)) {
                     TryAddLiteral(literalBuilder, tokens, onCreatedTokenHandler);
-                    functionBuilder.Append(c);
+                    stringBuilder.Append(c);
                     continue;
                 }
 
                 if (char.IsDigit(c) || c.Equals('.')) {
-                    TryAddFunction(functionBuilder, tokens, onCreatedTokenHandler);
+                    TryAddConstant(stringBuilder, tokens, onCreatedTokenHandler);
+                    TryAddFunction(stringBuilder, tokens, onCreatedTokenHandler);
                     literalBuilder.Append(c);
                     continue;
                 }
 
                 TryAddLiteral(literalBuilder, tokens, onCreatedTokenHandler);
-                TryAddFunction(functionBuilder, tokens, onCreatedTokenHandler);
+                TryAddConstant(stringBuilder, tokens, onCreatedTokenHandler);
+                TryAddFunction(stringBuilder, tokens, onCreatedTokenHandler);
 
                 if (c.Equals(' ')) {
                     continue;
                 }
 
                 if (c.Equals(',')) {
-                    tokens.Add(new ParameterSeparator(","));
+                    tokens.Add(new ParameterSeparator());
                     continue;
                 }
 
@@ -177,7 +195,7 @@ namespace MathExpressionParser
                         // we can add current token as a unary operator
                         Type lbType = lookBehind.GetType();
                         if ((lookBehind is Function && (lbType != typeof(Parenthesis) || ((Parenthesis)lookBehind).Associativity != Associativity.RIGHT)) ||
-                             lbType == typeof(ParameterSeparator) && UnaryOperators.ContainsKey(oValue)) {
+                             lookBehind is ParameterSeparator && UnaryOperators.ContainsKey(oValue)) {
                             tokens.Add(UnaryOperators[oValue]);
                             onCreatedTokenHandler?.Invoke(UnaryOperators[oValue]);
                             continue;
@@ -188,9 +206,8 @@ namespace MathExpressionParser
                 // parenthesis & binary operators
                 if (Parenthesis.ContainsKey(oValue)) {
                     // implicit multiplication(left side) between literal <-> polynomial && polynomial <-> polynomial e.g 5(3+2); (3+2)(3+2)
-                    if (Parenthesis[oValue].Associativity == Associativity.LEFT && (lookBehind is Literal || (lookBehind is Parenthesis && ((Parenthesis)lookBehind).Associativity == Associativity.RIGHT))) {
-                        tokens.Add(BinaryOperators["*"]);
-                        onCreatedTokenHandler?.Invoke(BinaryOperators["*"]);
+                    if (Parenthesis[oValue].Associativity == Associativity.LEFT) {
+                        CheckForImplicitMultiplication(tokens, onCreatedTokenHandler);
                     }
                     tokens.Add(Parenthesis[oValue]);
                     onCreatedTokenHandler?.Invoke(Parenthesis[oValue]);
@@ -205,7 +222,8 @@ namespace MathExpressionParser
             }
 
             TryAddLiteral(literalBuilder, tokens, onCreatedTokenHandler);
-            TryAddFunction(functionBuilder, tokens, onCreatedTokenHandler);
+            TryAddConstant(stringBuilder, tokens, onCreatedTokenHandler);
+            TryAddFunction(stringBuilder, tokens, onCreatedTokenHandler);
 
             return tokens;
         }
@@ -217,10 +235,7 @@ namespace MathExpressionParser
                 Token lookBehind = tokenStorage.LastOrDefault();
                 Literal n = new Literal(literalBuilder.ToString());
                 // implicit multiplication (right side); e.g. (3+2)5
-                if (lookBehind is Literal || (lookBehind is Parenthesis && ((Parenthesis)lookBehind).Associativity == Associativity.RIGHT)) {
-                    tokenStorage.Add(BinaryOperators["*"]);
-                    onCreatedTokenHandler?.Invoke(BinaryOperators["*"]);
-                }
+                CheckForImplicitMultiplication(tokenStorage, onCreatedTokenHandler);
 
                 tokenStorage.Add(n);
                 onCreatedTokenHandler?.Invoke(n);
@@ -230,24 +245,47 @@ namespace MathExpressionParser
         }
 
 
-        private void TryAddFunction(StringBuilder functionBuilder, List<Token> tokenStorage, Action<Token> onCreatedTokenHandler)
+        private void TryAddConstant(StringBuilder stringBuilder, List<Token> tokenStorage, Action<Token> onCreatedTokenHandler)
         {
-            if (functionBuilder.Length > 0) {
-                string func = functionBuilder.ToString();
+            if (stringBuilder.Length > 0) {
+                string str = stringBuilder.ToString().ToLower();
+                if (!Constants.ContainsKey(str)) {
+                    return; // todo
+                }
+
+                CheckForImplicitMultiplication(tokenStorage, onCreatedTokenHandler);
+
+                tokenStorage.Add(Constants[str]);
+                onCreatedTokenHandler?.Invoke(Constants[str]);
+                stringBuilder.Clear();
+            }
+        }
+
+
+        private void TryAddFunction(StringBuilder stringBuilder, List<Token> tokenStorage, Action<Token> onCreatedTokenHandler)
+        {
+            if (stringBuilder.Length > 0) {
+                string func = stringBuilder.ToString().ToLower();
                 if (!Functions.ContainsKey(func)) {
                     throw new Exception("Unsupported function");
                 }
 
                 // 5sin90; sin90sin90; sin(90)sin(90);
-                Token lookBehind = tokenStorage.LastOrDefault();
-                if (lookBehind is Literal || (lookBehind is Parenthesis && ((Parenthesis)lookBehind).Associativity == Associativity.RIGHT)) {
-                    tokenStorage.Add(BinaryOperators["*"]);
-                    onCreatedTokenHandler?.Invoke(BinaryOperators["*"]);
-                }
+                CheckForImplicitMultiplication(tokenStorage, onCreatedTokenHandler);
 
                 tokenStorage.Add(Functions[func]);
                 onCreatedTokenHandler?.Invoke(Functions[func]);
-                functionBuilder.Clear();
+                stringBuilder.Clear();
+            }
+        }
+
+
+        private void CheckForImplicitMultiplication(List<Token> tokenStorage, Action<Token> onCreatedTokenHandler)
+        {
+            Token lookBehind = tokenStorage.LastOrDefault();
+            if (lookBehind is Constant || lookBehind is Literal || (lookBehind is Parenthesis && ((Parenthesis)lookBehind).Associativity == Associativity.RIGHT)) {
+                tokenStorage.Add(BinaryOperators["*"]);
+                onCreatedTokenHandler?.Invoke(BinaryOperators["*"]);
             }
         }
     }
